@@ -23,6 +23,7 @@ enum JWTState {
 message JWTHeader {
     string typ = 1;
     string alg = 2;
+    string kid = 3;
 }
 
 message Profile {
@@ -49,11 +50,11 @@ message Claims {
     int64 iat = 6;
     string jti = 7;
 
-    string name = 8;
-    string picture = 9;
-    string email = 10;
-    bool email_verified = 11;
-    repeated string api_access = 12;
+    TokenIntrospection token_introspection = 8;
+    string scope = 9;
+    string name = 10;
+    string email = 11;
+    bool email_verified = 12;
 
     string jwt_store = 13;
     string jwk_cert = 14;
@@ -63,6 +64,18 @@ message JWT {
     JWTHeader header = 1;
     Claims claims = 2;
     string signature = 3;
+}
+
+message TokenIntrospection {
+    bool active = 1;
+    string iss = 2;
+    string aud = 3;
+    int64 iat = 4;
+    int64 exp = 5;
+    string client_id = 6;
+    string scope = 7;
+    string sub = 8;
+    string jti = 9;
 }
 
 message Credentials {

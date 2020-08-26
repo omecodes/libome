@@ -27,6 +27,11 @@ func (this *Email) Validate() error {
 	return nil
 }
 func (this *Claims) Validate() error {
+	if this.TokenIntrospection != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.TokenIntrospection); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("TokenIntrospection", err)
+		}
+	}
 	return nil
 }
 func (this *JWT) Validate() error {
@@ -40,6 +45,9 @@ func (this *JWT) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Claims", err)
 		}
 	}
+	return nil
+}
+func (this *TokenIntrospection) Validate() error {
 	return nil
 }
 func (this *Credentials) Validate() error {

@@ -79,10 +79,13 @@
         "jti": {
           "type": "string"
         },
-        "name": {
+        "token_introspection": {
+          "$ref": "#/definitions/authpbTokenIntrospection"
+        },
+        "scope": {
           "type": "string"
         },
-        "picture": {
+        "name": {
           "type": "string"
         },
         "email": {
@@ -91,12 +94,6 @@
         "email_verified": {
           "type": "boolean",
           "format": "boolean"
-        },
-        "api_access": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "jwt_store": {
           "type": "string"
@@ -174,6 +171,9 @@
         },
         "alg": {
           "type": "string"
+        },
+        "kid": {
+          "type": "string"
         }
       }
     },
@@ -234,6 +234,41 @@
         },
         "info": {
           "$ref": "#/definitions/authpbJwtInfo"
+        }
+      }
+    },
+    "authpbTokenIntrospection": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "iss": {
+          "type": "string"
+        },
+        "aud": {
+          "type": "string"
+        },
+        "iat": {
+          "type": "string",
+          "format": "int64"
+        },
+        "exp": {
+          "type": "string",
+          "format": "int64"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "sub": {
+          "type": "string"
+        },
+        "jti": {
+          "type": "string"
         }
       }
     },
