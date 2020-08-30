@@ -32,7 +32,7 @@ func New(c Config) *Client {
 
 func (c Client) Info() (*Info, error) {
 	if c.info == nil {
-		infoEndpoint := fmt.Sprintf("%s/info", c.config.Address)
+		infoEndpoint := fmt.Sprintf("https://%s/info", c.config.Address)
 		var (
 			rsp *http.Response
 			err error

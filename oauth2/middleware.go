@@ -25,7 +25,7 @@ type AuthorizedHandleFunc func(t *Token, continueURL string, w http.ResponseWrit
 type AuthenticationRequiredFunc func(r *http.Request) bool
 
 type workflow struct {
-	callbackURL        string
+	callbackURL        *url.URL
 	callbackRequestURI string
 	configProvider     ConfigProvider
 	continueURL        string
@@ -35,7 +35,7 @@ type workflow struct {
 
 func (m *workflow) middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.RequestURI == m.callbackURL {
+		if r.URL.Path == m.callbackURL.Path {
 			m.authorized(w, r)
 			return
 		}
@@ -97,7 +97,7 @@ func (m *workflow) login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	config.CallbackURL = m.callbackURL
+	config.CallbackURL = m.callbackURL.String()
 
 	q := r.URL.Query()
 	m.continueURL = q.Get("continue")
@@ -131,7 +131,7 @@ func Workflow(callbackURI string, configProvider ConfigProvider, authRequiredFun
 	}
 
 	m := &workflow{
-		callbackURL:        callbackURI,
+		callbackURL:        u,
 		callbackRequestURI: u.RequestURI(),
 		configProvider:     configProvider,
 		authRequiredFunc:   authRequiredFunc,
