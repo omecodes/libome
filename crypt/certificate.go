@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/big"
 	"net"
 	"os"
@@ -186,7 +187,8 @@ func LoadPrivateKey(password []byte, file string) (crypto.PrivateKey, error) {
 		return nil, errors.New("bad input")
 	}
 
-	if block.Type != "RSA PRIVATE KEY" && block.Type != "ECDSA PRIVATE KEY" {
+	if block.Type != "RSA PRIVATE KEY" && block.Type != "ECDSA PRIVATE KEY" && block.Type != "PRIVATE KEY" {
+		log.Println(block.Type)
 		return nil, errors.New("key not supported")
 	}
 
@@ -197,6 +199,10 @@ func LoadPrivateKey(password []byte, file string) (crypto.PrivateKey, error) {
 		}
 	} else {
 		keyBytes = block.Bytes
+	}
+
+	if block.Type == "PRIVATE KEY" {
+		return x509.ParsePKCS8PrivateKey(keyBytes)
 	}
 
 	if block.Type == "RSA PRIVATE KEY" {
@@ -257,6 +263,7 @@ func StoreCertificate(cert *x509.Certificate, file string, perm os.FileMode) err
 	return ioutil.WriteFile(file, buff.Bytes(), os.ModePerm)
 }
 
+// PEMEncodeCertificate encodes certificate chain into pem file
 func PEMEncodeCertificate(cert *x509.Certificate) ([]byte, error) {
 	buff := bytes.NewBuffer([]byte{})
 	err := pem.Encode(buff, &pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})
@@ -266,6 +273,7 @@ func PEMEncodeCertificate(cert *x509.Certificate) ([]byte, error) {
 	return buff.Bytes(), nil
 }
 
+// PEMDecodeCertificate creates certificate from pem bytes
 func PEMDecodeCertificate(pemBytes []byte) (*x509.Certificate, error) {
 	block, _ := pem.Decode(pemBytes)
 	if block == nil {
