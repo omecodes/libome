@@ -195,6 +195,9 @@
         "iss": {
           "type": "string"
         },
+        "aud": {
+          "type": "string"
+        },
         "jti": {
           "type": "string"
         },
