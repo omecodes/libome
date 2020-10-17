@@ -106,10 +106,11 @@ message SyncMessage {
 }
 
 message JwtInfo {
-    string jti = 1;
-    int64 nbf = 2;
-    int64 exp = 3;
-    JWTState state = 4;
+    string iss = 1;
+    string jti = 2;
+    int64 nbf = 3;
+    int64 exp = 4;
+    JWTState state = 5;
 }
 
 message JwtEvent {

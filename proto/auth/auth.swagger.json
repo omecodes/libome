@@ -192,6 +192,9 @@
     "authpbJwtInfo": {
       "type": "object",
       "properties": {
+        "iss": {
+          "type": "string"
+        },
         "jti": {
           "type": "string"
         },
