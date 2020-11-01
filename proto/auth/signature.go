@@ -2,6 +2,7 @@ package authpb
 
 import (
 	"crypto/ecdsa"
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
@@ -12,7 +13,7 @@ import (
 	"strings"
 )
 
-func EcdsaJwtSignature(key *ecdsa.PrivateKey, j *JWT) (string, error) {
+func (j *JWT) EcdsaBasedSignature(key *ecdsa.PrivateKey) (string, error) {
 	claimsBytes, err := json.Marshal(j.Claims)
 	if err != nil {
 		return "", err
@@ -39,7 +40,7 @@ func EcdsaJwtSignature(key *ecdsa.PrivateKey, j *JWT) (string, error) {
 		base64.RawURLEncoding.EncodeToString(s.Bytes())), nil
 }
 
-func EcdsaJwtSignatureVerify(key *ecdsa.PublicKey, j *JWT) (bool, error) {
+func (j *JWT) EcdsaBasedVerify(key *ecdsa.PublicKey) (bool, error) {
 	claimsBytes, err := json.Marshal(j.Claims)
 	if err != nil {
 		return false, fmt.Errorf("could not encode claims: %s", err)
@@ -73,4 +74,23 @@ func EcdsaJwtSignatureVerify(key *ecdsa.PublicKey, j *JWT) (bool, error) {
 	sInt.SetBytes(s)
 
 	return ecdsa.Verify(key, hash, rInt, sInt), nil
+}
+
+func (j *JWT) SecretBaseSignature(secret string) (string, error) {
+	claimsBytes, err := json.Marshal(j.Claims)
+	if err != nil {
+		return "", err
+	}
+
+	headerBytes, err := json.Marshal(j.Header)
+	if err != nil {
+		return "", err
+	}
+
+	data := base64.RawURLEncoding.EncodeToString(headerBytes) + "." + base64.RawURLEncoding.EncodeToString(claimsBytes)
+
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write([]byte(data))
+	hash := h.Sum(nil)
+	return base64.RawURLEncoding.EncodeToString(hash), nil
 }

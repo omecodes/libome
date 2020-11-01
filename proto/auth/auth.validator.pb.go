@@ -32,6 +32,14 @@ func (this *Claims) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("TokenIntrospection", err)
 		}
 	}
+	if this.State != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.State); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("State", err)
+		}
+	}
+	return nil
+}
+func (this *State) Validate() error {
 	return nil
 }
 func (this *JWT) Validate() error {
@@ -64,7 +72,13 @@ func (this *SyncMessage) Validate() error {
 func (this *JwtInfo) Validate() error {
 	return nil
 }
-func (this *JwtEvent) Validate() error {
+func (this *GetJwtInfoRequest) Validate() error {
+	return nil
+}
+func (this *GetJwtInfoResponse) Validate() error {
+	return nil
+}
+func (this *SaveJwtRequest) Validate() error {
 	if this.Info != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Info); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Info", err)
@@ -72,44 +86,13 @@ func (this *JwtEvent) Validate() error {
 	}
 	return nil
 }
-func (this *FeedResponse) Validate() error {
+func (this *SaveJwtResponse) Validate() error {
 	return nil
 }
-func (this *FindJWTRequest) Validate() error {
+func (this *DeleteJwtRequest) Validate() error {
 	return nil
 }
-func (this *FindJWTResponse) Validate() error {
-	return nil
-}
-func (this *SaveTokenRequest) Validate() error {
-	if this.Info != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Info); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Info", err)
-		}
-	}
-	return nil
-}
-func (this *SaveTokenResponse) Validate() error {
-	return nil
-}
-func (this *DeleteJWTRequest) Validate() error {
-	return nil
-}
-func (this *DeleteJWTResponse) Validate() error {
-	return nil
-}
-func (this *RevokeTokenRequest) Validate() error {
-	if this.Jwt != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Jwt); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Jwt", err)
-		}
-	}
-	return nil
-}
-func (this *RevokeTokenResponse) Validate() error {
-	return nil
-}
-func (this *ListenRequest) Validate() error {
+func (this *DeleteJwtResponse) Validate() error {
 	return nil
 }
 func (this *CreateCredentialsRequest) Validate() error {

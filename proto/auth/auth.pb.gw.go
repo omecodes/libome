@@ -32,11 +32,11 @@ var _ = utilities.NewDoubleArray
 var _ = descriptor.ForMessage
 
 var (
-	filter_TokenStoreService_FindToken_0 = &utilities.DoubleArray{Encoding: map[string]int{"jti": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_TokenStoreService_GetJwtInfo_0 = &utilities.DoubleArray{Encoding: map[string]int{"jti": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
-func request_TokenStoreService_FindToken_0(ctx context.Context, marshaler runtime.Marshaler, client TokenStoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq FindJWTRequest
+func request_TokenStoreService_GetJwtInfo_0(ctx context.Context, marshaler runtime.Marshaler, client TokenStoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetJwtInfoRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -60,17 +60,17 @@ func request_TokenStoreService_FindToken_0(ctx context.Context, marshaler runtim
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TokenStoreService_FindToken_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TokenStoreService_GetJwtInfo_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.FindToken(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetJwtInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_TokenStoreService_FindToken_0(ctx context.Context, marshaler runtime.Marshaler, server TokenStoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq FindJWTRequest
+func local_request_TokenStoreService_GetJwtInfo_0(ctx context.Context, marshaler runtime.Marshaler, server TokenStoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetJwtInfoRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -91,11 +91,11 @@ func local_request_TokenStoreService_FindToken_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "jti", err)
 	}
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_TokenStoreService_FindToken_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_TokenStoreService_GetJwtInfo_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.FindToken(ctx, &protoReq)
+	msg, err := server.GetJwtInfo(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -105,7 +105,7 @@ func local_request_TokenStoreService_FindToken_0(ctx context.Context, marshaler 
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 func RegisterTokenStoreServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server TokenStoreServiceServer) error {
 
-	mux.Handle("GET", pattern_TokenStoreService_FindToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_TokenStoreService_GetJwtInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -114,14 +114,14 @@ func RegisterTokenStoreServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TokenStoreService_FindToken_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_TokenStoreService_GetJwtInfo_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_TokenStoreService_FindToken_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_TokenStoreService_GetJwtInfo_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -166,7 +166,7 @@ func RegisterTokenStoreServiceHandler(ctx context.Context, mux *runtime.ServeMux
 // "TokenStoreServiceClient" to call the correct interceptors.
 func RegisterTokenStoreServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client TokenStoreServiceClient) error {
 
-	mux.Handle("GET", pattern_TokenStoreService_FindToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_TokenStoreService_GetJwtInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -175,14 +175,14 @@ func RegisterTokenStoreServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TokenStoreService_FindToken_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_TokenStoreService_GetJwtInfo_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_TokenStoreService_FindToken_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_TokenStoreService_GetJwtInfo_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -190,9 +190,9 @@ func RegisterTokenStoreServiceHandlerClient(ctx context.Context, mux *runtime.Se
 }
 
 var (
-	pattern_TokenStoreService_FindToken_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"jwt", "match", "jti"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_TokenStoreService_GetJwtInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"jwt", "jti", "info"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
-	forward_TokenStoreService_FindToken_0 = runtime.ForwardResponseMessage
+	forward_TokenStoreService_GetJwtInfo_0 = runtime.ForwardResponseMessage
 )

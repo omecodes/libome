@@ -11,14 +11,14 @@
     "application/json"
   ],
   "paths": {
-    "/jwt/match/{jti}": {
+    "/jwt/{jti}/info": {
       "get": {
-        "operationId": "FindToken",
+        "operationId": "GetJwtInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authpbFindJWTResponse"
+              "$ref": "#/definitions/authpbGetJwtInfoResponse"
             }
           }
         },
@@ -52,57 +52,6 @@
         }
       }
     },
-    "authpbClaims": {
-      "type": "object",
-      "properties": {
-        "iss": {
-          "type": "string"
-        },
-        "sub": {
-          "type": "string"
-        },
-        "aud": {
-          "type": "string"
-        },
-        "exp": {
-          "type": "string",
-          "format": "int64"
-        },
-        "nbf": {
-          "type": "string",
-          "format": "int64"
-        },
-        "iat": {
-          "type": "string",
-          "format": "int64"
-        },
-        "jti": {
-          "type": "string"
-        },
-        "token_introspection": {
-          "$ref": "#/definitions/authpbTokenIntrospection"
-        },
-        "scope": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "email_verified": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "jwt_store": {
-          "type": "string"
-        },
-        "jwk_cert": {
-          "type": "string"
-        }
-      }
-    },
     "authpbCreateCredentialsResponse": {
       "type": "object",
       "properties": {
@@ -133,6 +82,9 @@
         }
       }
     },
+    "authpbDeleteJwtResponse": {
+      "type": "object"
+    },
     "authpbEventAction": {
       "type": "string",
       "enum": [
@@ -141,39 +93,11 @@
       ],
       "default": "Delete"
     },
-    "authpbFindJWTResponse": {
+    "authpbGetJwtInfoResponse": {
       "type": "object",
       "properties": {
         "state": {
           "$ref": "#/definitions/authpbJWTState"
-        }
-      }
-    },
-    "authpbJWT": {
-      "type": "object",
-      "properties": {
-        "header": {
-          "$ref": "#/definitions/authpbJWTHeader"
-        },
-        "claims": {
-          "$ref": "#/definitions/authpbClaims"
-        },
-        "signature": {
-          "type": "string"
-        }
-      }
-    },
-    "authpbJWTHeader": {
-      "type": "object",
-      "properties": {
-        "typ": {
-          "type": "string"
-        },
-        "alg": {
-          "type": "string"
-        },
-        "kid": {
-          "type": "string"
         }
       }
     },
@@ -214,10 +138,7 @@
         }
       }
     },
-    "authpbRevokeTokenResponse": {
-      "type": "object"
-    },
-    "authpbSaveTokenResponse": {
+    "authpbSaveJwtResponse": {
       "type": "object"
     },
     "authpbSetPasswordResponse": {
@@ -240,41 +161,6 @@
         },
         "info": {
           "$ref": "#/definitions/authpbJwtInfo"
-        }
-      }
-    },
-    "authpbTokenIntrospection": {
-      "type": "object",
-      "properties": {
-        "active": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "iss": {
-          "type": "string"
-        },
-        "aud": {
-          "type": "string"
-        },
-        "iat": {
-          "type": "string",
-          "format": "int64"
-        },
-        "exp": {
-          "type": "string",
-          "format": "int64"
-        },
-        "client_id": {
-          "type": "string"
-        },
-        "scope": {
-          "type": "string"
-        },
-        "sub": {
-          "type": "string"
-        },
-        "jti": {
-          "type": "string"
         }
       }
     },

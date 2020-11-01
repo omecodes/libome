@@ -24,7 +24,7 @@ type tokenVerifier struct {
 }
 
 func (v *tokenVerifier) verifyToken(t *JWT) (JWTState, error) {
-	verified, err := EcdsaJwtSignatureVerify(v.key, t)
+	verified, err := t.EcdsaBasedVerify(v.key)
 	if err != nil {
 		return 0, err
 	}
@@ -166,7 +166,7 @@ func (jwt *JWT) Verify(pemKey string) (JWTState, error) {
 		return JWTState_NOT_VALID, errors.New("unsupported key type")
 	}
 
-	verified, err := EcdsaJwtSignatureVerify(key.(*ecdsa.PublicKey), jwt)
+	verified, err := jwt.EcdsaBasedVerify(key.(*ecdsa.PublicKey))
 	if err != nil {
 		return 0, err
 	}

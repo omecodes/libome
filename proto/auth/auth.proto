@@ -56,8 +56,13 @@ message Claims {
     string email = 11;
     bool email_verified = 12;
 
-    string jwt_store = 13;
-    string jwk_cert = 14;
+    string key_url = 13;
+    State state = 14;
+}
+
+message State {
+    string service = 1;
+    string api_endpoint = 2;
 }
 
 message JWT {
@@ -92,10 +97,10 @@ enum EventAction {
 // TokenStoreService token database service
 service TokenStoreService {
     rpc Sync (stream SyncMessage) returns (stream SyncMessage);
-    rpc SaveToken(SaveTokenRequest) returns (SaveTokenResponse);
-    rpc RevokeToken (RevokeTokenRequest) returns (RevokeTokenResponse);
-    rpc FindToken (FindJWTRequest) returns (FindJWTResponse) {
-        option (google.api.http).get = "/jwt/match/{jti}";
+    rpc SaveJwt(SaveJwtRequest) returns (SaveJwtResponse);
+    rpc DeleteJwt (DeleteJwtRequest) returns (DeleteJwtResponse);
+    rpc GetJwtInfo (GetJwtInfoRequest) returns (GetJwtInfoResponse) {
+        option (google.api.http).get = "/jwt/{jti}/info";
     };
 }
 
@@ -104,7 +109,6 @@ message SyncMessage {
     string jti = 2;
     JwtInfo info = 3;
 }
-
 message JwtInfo {
     string iss = 1;
     string aud = 2;
@@ -114,43 +118,24 @@ message JwtInfo {
     JWTState state = 6;
 }
 
-message JwtEvent {
-    EventAction action = 1;
-    JwtInfo info = 2;
-}
-message FeedResponse {
-    string error = 1;
-    string jti = 2;
-}
-
-message FindJWTRequest {
+message GetJwtInfoRequest {
     string jti = 1;
     string signature = 2;
 }
-message FindJWTResponse {
+message GetJwtInfoResponse {
     JWTState state = 1;
 }
 
-message SaveTokenRequest {
+message SaveJwtRequest {
     JwtInfo info = 1;
 }
-message SaveTokenResponse {}
+message SaveJwtResponse {}
 
-message DeleteJWTRequest {
+message DeleteJwtRequest {
     string jti = 1;
 }
-message DeleteJWTResponse {
-    uint32 count = 1;
-}
+message DeleteJwtResponse {}
 
-message RevokeTokenRequest {
-    JWT jwt = 1;
-}
-message RevokeTokenResponse {
-}
-
-message ListenRequest {
-}
 
 // Authentication service
 service AuthenticationService {
