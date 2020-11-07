@@ -1,8 +1,7 @@
 syntax = "proto3";
 
-package pb;
-
 import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/proto/service/service.proto;pb";
 
 enum Protocol {
     Unknown = 0;

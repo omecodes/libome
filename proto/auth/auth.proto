@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package authpb;
-
-import "google/api/annotations.proto";
 import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/proto/auth/auth.proto;authpb";
 
 enum JWTPurpose {
     AUTHENTICATION = 0;

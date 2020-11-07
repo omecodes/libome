@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package accountspb;
-
 import "google/api/annotations.proto";
 import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+option go_package = "github.com/omecodes/libome/proto/accounts/accounts.proto;accountspb";
 
 message OauthCodeExchangeData {
     string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];

@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package apppb;
-
-import "google/api/annotations.proto";
 import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/proto/app/app.proto;apppb";
 
 enum FieldType {
   Other = 0;

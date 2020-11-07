@@ -1,8 +1,7 @@
 syntax = "proto3";
 
-package filespb;
-
 import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/proto/files/files.proto;filespb";
 
 enum DuplicateAction {
     Fail = 0;
@@ -91,7 +90,7 @@ message SyncMessage {
 
 message Access {
     string uuid = 1;
-    filespb.ShareType type = 2;
+    ShareType type = 2;
     string user = 3;
     string node_path = 4;
     Rights rights = 5;
