@@ -76,7 +76,7 @@ func (j *JWT) EcdsaBasedVerify(key *ecdsa.PublicKey) (bool, error) {
 	return ecdsa.Verify(key, hash, rInt, sInt), nil
 }
 
-func (j *JWT) SecretBaseSignature(secret string) (string, error) {
+func (j *JWT) SecretBasedSignature(secret string) (string, error) {
 	claimsBytes, err := json.Marshal(j.Claims)
 	if err != nil {
 		return "", err
