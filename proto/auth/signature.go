@@ -13,13 +13,13 @@ import (
 	"strings"
 )
 
-func (j *JWT) EcdsaBasedSignature(key *ecdsa.PrivateKey) (string, error) {
-	claimsBytes, err := json.Marshal(j.Claims)
+func (x *JWT) EcdsaBasedSignature(key *ecdsa.PrivateKey) (string, error) {
+	claimsBytes, err := json.Marshal(x.Claims)
 	if err != nil {
 		return "", err
 	}
 
-	headerBytes, err := json.Marshal(j.Header)
+	headerBytes, err := json.Marshal(x.Header)
 	if err != nil {
 		return "", err
 	}
@@ -40,13 +40,13 @@ func (j *JWT) EcdsaBasedSignature(key *ecdsa.PrivateKey) (string, error) {
 		base64.RawURLEncoding.EncodeToString(s.Bytes())), nil
 }
 
-func (j *JWT) EcdsaBasedVerify(key *ecdsa.PublicKey) (bool, error) {
-	claimsBytes, err := json.Marshal(j.Claims)
+func (x *JWT) EcdsaBasedVerify(key *ecdsa.PublicKey) (bool, error) {
+	claimsBytes, err := json.Marshal(x.Claims)
 	if err != nil {
 		return false, fmt.Errorf("could not encode claims: %s", err)
 	}
 
-	headerBytes, err := json.Marshal(j.Header)
+	headerBytes, err := json.Marshal(x.Header)
 	if err != nil {
 		return false, fmt.Errorf("could not encode header: %s", err)
 	}
@@ -57,7 +57,7 @@ func (j *JWT) EcdsaBasedVerify(key *ecdsa.PublicKey) (bool, error) {
 	sha.Write([]byte(data))
 	hash := sha.Sum(nil)
 
-	parts := strings.Split(j.Signature, ".")
+	parts := strings.Split(x.Signature, ".")
 	r, err := base64.RawURLEncoding.DecodeString(parts[0])
 	if err != nil {
 		return false, errors.New("token wrong format")
@@ -76,13 +76,13 @@ func (j *JWT) EcdsaBasedVerify(key *ecdsa.PublicKey) (bool, error) {
 	return ecdsa.Verify(key, hash, rInt, sInt), nil
 }
 
-func (j *JWT) SecretBasedSignature(secret string) (string, error) {
-	claimsBytes, err := json.Marshal(j.Claims)
+func (x *JWT) SecretBasedSignature(secret string) (string, error) {
+	claimsBytes, err := json.Marshal(x.Claims)
 	if err != nil {
 		return "", err
 	}
 
-	headerBytes, err := json.Marshal(j.Header)
+	headerBytes, err := json.Marshal(x.Header)
 	if err != nil {
 		return "", err
 	}
