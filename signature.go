@@ -1,4 +1,4 @@
-package authpb
+package ome
 
 import (
 	"crypto/ecdsa"

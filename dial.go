@@ -1,15 +1,16 @@
-package pb
+package ome
 
 import (
 	"crypto"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	crypto2 "github.com/omecodes/libome/crypt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials"
 	"sync"
+
+	"github.com/omecodes/libome/crypt"
 )
 
 type poolOptions struct {
@@ -117,11 +118,11 @@ func (p *pool) Connection(name string, opts ...grpc.DialOption) (*grpc.ClientCon
 }
 
 func (p *pool) getTLSConfig(node *Node) (*tls.Config, error) {
-	if node.Security == Security_MutualTLS {
+	if node.Security == Security_MutualTls {
 		return p.mutualTLS(node)
 	}
 
-	if node.Security == Security_TLS {
+	if node.Security == Security_Tls {
 		return p.tlsConfig(node)
 	}
 
@@ -174,7 +175,7 @@ func (p *pool) tlsConfig(node *Node) (*tls.Config, error) {
 func (p *pool) getCaCert() (*x509.Certificate, error) {
 	var err error
 	if p.caCert == nil && p.options.caCertFilename != "" {
-		p.caCert, err = crypto2.LoadCertificate(p.options.caCertFilename)
+		p.caCert, err = crypt.LoadCertificate(p.options.caCertFilename)
 	}
 	return p.caCert, err
 }
@@ -182,7 +183,7 @@ func (p *pool) getCaCert() (*x509.Certificate, error) {
 func (p *pool) getCert() (*x509.Certificate, error) {
 	var err error
 	if p.cert == nil && p.options.certFilename != "" {
-		p.cert, err = crypto2.LoadCertificate(p.options.certFilename)
+		p.cert, err = crypt.LoadCertificate(p.options.certFilename)
 	}
 	return p.cert, err
 }
@@ -190,7 +191,7 @@ func (p *pool) getCert() (*x509.Certificate, error) {
 func (p *pool) getPrivateKey() (crypto.PrivateKey, error) {
 	var err error
 	if p.key == nil && p.options.keyFilename != "" {
-		p.key, err = crypto2.LoadPrivateKey(p.options.keyPassword, p.options.keyFilename)
+		p.key, err = crypt.LoadPrivateKey(p.options.keyPassword, p.options.keyFilename)
 	}
 	return p.key, err
 }

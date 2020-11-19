@@ -1,4 +1,4 @@
-package authpb
+package ome
 
 import (
 	"context"
@@ -30,28 +30,28 @@ func (v *tokenVerifier) verifyToken(t *JWT) (JWTState, error) {
 	}
 
 	if !verified {
-		return JWTState_NOT_SIGNED, nil
+		return JWTState_NotSigned, nil
 	}
 
 	if t.Claims.Exp != -1 && t.Claims.Exp <= time.Now().Unix() {
-		return JWTState_EXPIRED, nil
+		return JWTState_Expired, nil
 	}
 
 	if t.Claims.Nbf != -1 && t.Claims.Nbf > time.Now().Unix() {
-		return JWTState_NOT_EFFECTIVE, nil
+		return JWTState_NotEffective, nil
 	}
 
-	return JWTState_VALID, nil
+	return JWTState_Valid, nil
 }
 
 func (v *tokenVerifier) Verify(ctx context.Context, t *JWT) (JWTState, error) {
 	if t == nil {
-		return JWTState_NOT_VALID, errors.New("forbidden")
+		return JWTState_NotValid, errors.New("forbidden")
 	}
 
 	state, err := v.verifyToken(t)
 	if err != nil {
-		return JWTState_NOT_VALID, errors.New("forbidden")
+		return JWTState_NotValid, errors.New("forbidden")
 	}
 	return state, nil
 }
@@ -159,11 +159,11 @@ func String(jwt *JWT) (string, error) {
 func (jwt *JWT) Verify(pemKey string) (JWTState, error) {
 	key, keyType, err := crypt.PEMDecodePublicKey([]byte(pemKey))
 	if err != nil {
-		return JWTState_NOT_VALID, err
+		return JWTState_NotValid, err
 	}
 
 	if keyType != "ECDSA PUBLIC KEY" {
-		return JWTState_NOT_VALID, errors.New("unsupported key type")
+		return JWTState_NotValid, errors.New("unsupported key type")
 	}
 
 	verified, err := jwt.EcdsaBasedVerify(key.(*ecdsa.PublicKey))
@@ -172,16 +172,16 @@ func (jwt *JWT) Verify(pemKey string) (JWTState, error) {
 	}
 
 	if !verified {
-		return JWTState_NOT_SIGNED, nil
+		return JWTState_NotSigned, nil
 	}
 
 	if jwt.Claims.Exp != -1 && jwt.Claims.Exp <= time.Now().Unix() {
-		return JWTState_EXPIRED, nil
+		return JWTState_Expired, nil
 	}
 
 	if jwt.Claims.Nbf != -1 && jwt.Claims.Nbf > time.Now().Unix() {
-		return JWTState_NOT_EFFECTIVE, nil
+		return JWTState_NotEffective, nil
 	}
 
-	return JWTState_VALID, nil
+	return JWTState_Valid, nil
 }

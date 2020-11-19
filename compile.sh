@@ -1,8 +1,6 @@
 #!/bin/bash
 
-for f in $(find . -type d -maxdepth 1 -mindepth 1); do
-  cd "$f" || exit
-  /Users/jabar/protoc4/bin/protoc -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+  $PROTOCPATH/bin/protoc -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
   -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway \
   -I$GOPATH/src/github.com/google/protobuf \
   -I$GOPATH/src/github.com/golang/protobuf \
@@ -15,5 +13,3 @@ for f in $(find . -type d -maxdepth 1 -mindepth 1); do
   --grpc-gateway_opt paths=source_relative \
   --grpc-gateway_opt generate_unbound_methods=true \
   *.proto
-  cd ..
-done

@@ -8,10 +8,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/omecodes/libome/crypt"
-	apppb "github.com/omecodes/libome/proto/app"
-	authpb "github.com/omecodes/libome/proto/auth"
 	"net/http"
+
+	"github.com/omecodes/libome/crypt"
 )
 
 type Config struct {
@@ -80,7 +79,7 @@ func (c Client) Info() (*Info, error) {
 	return c.info, nil
 }
 
-func (c Client) Verify(ctx context.Context, t *authpb.JWT) (authpb.JWTState, error) {
+func (c Client) Verify(ctx context.Context, t *JWT) (JWTState, error) {
 	info, err := c.Info()
 	if err != nil {
 		return 0, err
@@ -91,10 +90,10 @@ func (c Client) Verify(ctx context.Context, t *authpb.JWT) (authpb.JWTState, err
 		return 0, err
 	}
 
-	verifier := authpb.NewTokenVerifier(key.(*ecdsa.PublicKey))
+	verifier := NewTokenVerifier(key.(*ecdsa.PublicKey))
 	return verifier.Verify(ctx, t)
 }
 
-func (c *Client) RegisterUserAttributeDefinition(attrDefs []*apppb.UserAttributeDefinition) error {
+func (c *Client) RegisterUserAttributeDefinition(attrDefs []*UserAttributeDefinition) error {
 	return nil
 }

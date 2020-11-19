@@ -3,7 +3,7 @@ module github.com/omecodes/libome
 go 1.13
 
 require (
-	github.com/golang/protobuf v1.4.3
+	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/securecookie v1.1.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1
 	github.com/mwitkow/go-proto-validators v0.3.2
