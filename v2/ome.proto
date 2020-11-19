@@ -1,0 +1,1256 @@
+syntax = "proto3";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/v2/ome.proto;ome";
+
+enum FileType {
+  Unknown = 0;
+  File = 1;
+  Directory = 2;
+}
+
+enum Scope {
+  Public = 0;
+  Personal = 1;
+  ContextRestricted = 2;
+}
+
+enum Category {
+  UnCategorized = 0;
+  Education = 1;
+  School = 2;
+  Career = 3;
+  Social = 4;
+  Sports = 6;
+  Music = 7;
+  Photography = 8;
+  Productivity = 9;
+  Shopping = 10;
+  Government = 11;
+  News = 12;
+  Press = 13;
+  Books = 14;
+  Finance = 15;
+  Business = 16;
+  Beauty = 17;
+  Podcasts = 18;
+  Health = 19;
+  Medical = 20;
+  Dating = 21;
+  Communications = 22;
+  Entertainment = 23;
+  Food = 24;
+  Lifestyle = 25;
+  Video = 26;
+}
+
+enum OnDuplicateAction {
+  Failure = 0;
+  AutoRename = 1;
+  Replace = 2;
+}
+
+enum Action {
+  None = 0;
+  Create = 1;
+  Delete = 2;
+  Move = 3;
+  MoveEdit = 4;
+  Rename = 5;
+  RenameEdit = 6;
+  Edit = 7;
+  Read = 8;
+  Share = 9;
+  UnShare = 10;
+  UpdateMeta = 11;
+}
+
+enum FileAction {
+  NoAction = 0;
+  ReadFile = 1;
+  CreateFile = 2;
+  DeleteFile = 4;
+  MoveFile = 8;
+}
+
+enum Access {
+  Denied = 0;
+  CanRead = 1;
+  CanUpdate = 2;
+  CanDelete = 4;
+  CanShare = 8;
+  Full = 15;
+}
+
+enum ShareType {
+  Restricted = 0;
+  PublicLink = 1;
+  UserShare = 2;
+}
+
+enum Protocol {
+  Unsupported = 0;
+  Grpc = 1;
+  Http = 2;
+}
+
+enum ServiceType {
+  UnknownType = 0;
+  CA = 1;
+  Authentication = 2;
+  Organization = 3;
+  TokenStore = 4;
+  Data = 5;
+  FileStorage = 6;
+  AppStore = 7;
+  UserAccounts = 8;
+  FilesServer = 9;
+}
+
+enum Security {
+  Insecure = 0;
+  Tls = 1;
+  Acme = 2;
+  MutualTls = 3;
+}
+
+enum RegistryEventType {
+  UnknownEvent = 0;
+  Register = 1;
+  DeRegister = 2;
+  DeRegisterNode = 3;
+  Update = 4;
+}
+
+enum ActionOnRegisterExistingService {
+  ForceReplace = 0;
+  UpdateExisting = 1;
+  AddNodes = 2;
+  RemoveOld = 4;
+}
+
+enum GroupAbilities {
+  Unable = 0;
+  CanManageResourcesAccess = 1;
+  CanCreateGroup = 2;
+}
+
+// ***********************
+//        Accounts
+// ***********************
+
+message OauthCodeExchangeData {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string client_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string state = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+
+message UserEmailValidationData {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  int64 expiry = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+
+message ResetPasswordEmailData {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  int64 expiry = 2;
+}
+
+message Authorization {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string application_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  repeated string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  int64 duration = 4 [(validator.field) = {msg_exists: true, int_gt: 0}];
+}
+
+message Session {
+  string id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user_agent = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string jwt = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  int64 openedAt = 4;
+}
+
+message AccountValidationData {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  int64 expiry = 3;
+}
+
+message AccountInfo {
+  string username = 1;
+  string email = 2;
+  bool email_confirmed = 3;
+  int64 created_at = 6;
+}
+
+message FindAccountRequest {
+  string username = 1;
+  string email = 2;
+}
+message FindAccountResponse {
+  bool username_exists = 1;
+  bool email_exists = 2;
+}
+
+message CreateAccountRequest {
+  string username = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string email = 2 [(validator.field) = {msg_exists : true, length_gt: 0}];
+  string password = 3 [(validator.field) = {msg_exists : true, length_gt: 0}];
+}
+message CreateAccountResponse {
+  bool username_exists = 1;
+  bool email_exists = 2;
+}
+
+message ValidateEmailRequest {
+  string code = 1;
+}
+message ValidateEmailResponse {}
+
+message RequestEmailValidationRequest {
+  string email = 1;
+}
+message RequestEmailValidationResponse {}
+
+message AccountInfoRequest {
+  string username = 1;
+}
+message AccountInfoResponse {
+  AccountInfo info = 1;
+}
+
+message SelectAccountRequest {
+  bool switch = 1;
+}
+message SelectAccountResponse {
+  string redirect_url = 1;
+}
+
+message RequestPasswordResetRequest {
+  string email = 1;
+}
+message RequestPasswordResetResponse {
+  string redirect_url = 1;
+}
+
+message UpdatePasswordRequest {
+  string new_password = 1;
+  string password_confirm = 2;
+}
+message UpdatePasswordResponse {}
+
+message LoginRequest {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string password = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message LoginResponse {
+  string redirectURL = 1;
+}
+
+message LogoutRequest {}
+message LogoutResponse {}
+
+message ListSessionsRequest {}
+message ListSessionsResponse {
+  repeated Session sessions = 1;
+}
+
+message CloseSessionRequest {
+  string session_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message CloseSessionResponse {}
+
+message AuthorizeRequest {
+  string response_type = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string client_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string state = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string redirect_uri = 5;
+}
+message AuthorizeResponse {
+}
+
+message GetTokenRequest {
+  string grant_type = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string code = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string redirect_uri = 3;
+  string code_verifier = 4;
+  string username = 5;
+  string password = 6;
+  string refresh_token = 7;
+}
+message GetTokenResponse {
+  string jwt = 1;
+}
+
+
+// ***********************
+//        Applications
+// ***********************
+
+enum ApplicationLevel {
+  Root = 0;
+  Master = 1;
+  Internal = 2;
+  External = 3;
+}
+
+enum FieldType {
+  Other = 0;
+  String = 1;
+  StringList = 2;
+  StringMap = 3;
+  Text = 4;
+  Number = 5;
+  NumberMap = 6;
+  FloatingNumber = 7;
+  FloatingNumberMap = 8;
+  Timestamp = 9;
+  JsonEncoded = 10;
+}
+
+message Field {
+  string name = 1;
+  FieldType type = 2;
+  string label = 3;
+  string description = 4;
+}
+
+message AppInfo {
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string created_by = 2;
+  int64 created_at = 3 [(validator.field) = {msg_exists: true, int_gt: 0}];
+  string label = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string logo_url = 5;
+  string description = 6;
+  string website = 7;
+}
+
+message Application {
+  string id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  bool activated = 2;
+  string oauth_callback_url = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  ApplicationLevel level = 4;
+  repeated Category categories = 5;
+  string secret = 6 [(validator.field) = {msg_exists: true}];
+  AppInfo info = 7 [(validator.field) = {msg_exists: true}];
+}
+
+message UserAttributeDefinition {
+  string name = 1 [(validator.field) = {msg_exists: true}];
+  string mime = 2 [(validator.field) = {msg_exists: true}];
+  string context = 3 [(validator.field) = {msg_exists: true}];
+  Scope scope = 4 [(validator.field) = {msg_exists: true}];
+  repeated string categories = 5 [(validator.field) = {msg_exists: true}];
+  bool editable_out_of_context = 6 [(validator.field) = {msg_exists: true}];
+  string label = 7;
+  string description = 8;
+  repeated Field fields = 9 [(validator.field) = {msg_exists: true}];
+}
+
+message ApplicationAttributeDefinition {
+  string name = 1;
+  string label = 2;
+  string description = 3;
+  repeated Field fields = 4;
+}
+
+message FieldTranslation {
+  string name = 1;
+  string label = 2;
+  string description = 3;
+}
+
+message AttributeTranslation {
+  string attribute_id = 1;
+  string locale_name = 2;
+  bool is_app_attribute = 3;
+  string label = 4;
+  string description = 5;
+  FieldTranslation fields = 6;
+}
+
+message RegisterApplicationRequest {
+  Application application = 1 [(validator.field) = {msg_exists: true}];
+}
+message RegisterApplicationResponse{
+  bool id_exists = 1;
+}
+
+message DeRegisterApplicationRequest{
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message DeRegisterApplicationResponse{}
+
+message ListApplicationsRequest{}
+message ListApplicationsResponse{
+  repeated Application applications = 1;
+}
+
+message GetApplicationRequest{
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message GetApplicationResponse{
+  Application application = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetUserAttributeDefinitionRequest{
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string attribute_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message GetUserAttributeDefinitionResponse{
+  UserAttributeDefinition definition = 1 [(validator.field) = {msg_exists: true}];
+  string label = 2;
+  string description = 3;
+}
+
+message GetApplicationAttributeDefinitionRequest{
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string attribute_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message GetApplicationAttributeDefinitionResponse{
+  ApplicationAttributeDefinition definition = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message ListUserAttributeDefinitionsRequest {
+  string application_id = 1;
+}
+message ListUserAttributeDefinitionsResponse {
+  repeated UserAttributeDefinition definitions = 1;
+}
+
+message ListApplicationAttributeDefinitionsRequest {
+  string application_id = 1;
+}
+message ListApplicationAttributeDefinitionsResponse {
+  repeated UserAttributeDefinition definitions = 1;
+}
+
+message SaveUserAttributeDefinitionRequest{
+  UserAttributeDefinition definition = 1 [(validator.field) = {msg_exists: true}];
+}
+message SaveUserAttributeDefinitionResponse{}
+
+message SaveApplicationAttributeDefinitionRequest{
+  ApplicationAttributeDefinition definition = 1 [(validator.field) = {msg_exists: true}];
+}
+message SaveApplicationAttributeDefinitionResponse{}
+
+message DeleteUserAttributeDefinitionRequest {
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string attribute_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message DeleteUserAttributeDefinitionResponse {}
+
+message DeleteApplicationAttributeDefinitionRequest {
+  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string attribute_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message DeleteApplicationAttributeDefinitionResponse {}
+
+message AddAttributeTranslationRequest {
+  AttributeTranslation translation = 1;
+}
+message AddAttributeTranslationResponse {}
+
+message VerifyAuthenticationChallengeRequest {
+  string application_id = 1;
+  string nonce = 2;
+  string challenge = 3;
+}
+message VerifyAuthenticationChallengeResponse {
+  bool verified = 1;
+}
+
+message CheckIfExistsRequest {
+  string application_id = 1;
+}
+message CheckIfExistsResponse {
+  bool exists = 1;
+}
+
+service Applications {
+  rpc SaveUserAttributeDefinitions(stream UserAttributeDefinition) returns (SaveUserAttributeDefinitionResponse){
+    option(google.api.http) = {
+      post: "/api/application/attributes";
+      body: "*";
+    };
+  };
+  rpc SaveApplicationAttributeDefinitions(stream ApplicationAttributeDefinition) returns (SaveApplicationAttributeDefinitionResponse){
+    option(google.api.http) = {
+      post: "/api/application/user-attributes";
+      body: "*";
+    };
+  };
+  rpc RegisterApplication(RegisterApplicationRequest) returns (RegisterApplicationResponse) {
+    option(google.api.http) = {
+      put: "/api/application";
+      body: "*";
+    };
+  };
+  rpc DeRegister(DeRegisterApplicationRequest) returns (DeRegisterApplicationResponse) {
+    option(google.api.http).delete = "/api/application/{application_id}";
+  };
+  rpc ListApplications(ListApplicationsRequest) returns (stream Application) {
+    option(google.api.http).get = "/api/applications";
+  };
+  rpc GetApplication(GetApplicationRequest) returns (GetApplicationResponse) {
+    option(google.api.http).get = "/api/application/{application_id}";
+  };
+  rpc SaveUserAttributeDefinition(SaveUserAttributeDefinitionRequest) returns (SaveUserAttributeDefinitionResponse){
+    option(google.api.http) = {
+      post: "/api/application/{definition.context}/user-attribute";
+      body: "*";
+    };
+  };
+  rpc SaveApplicationAttributeDefinition(SaveApplicationAttributeDefinitionRequest) returns (SaveApplicationAttributeDefinitionResponse){
+    option(google.api.http) = {
+      post: "/api/application/attribute";
+      body: "*";
+    };
+  };
+  rpc GetUserAttributeDefinition(GetUserAttributeDefinitionRequest) returns (GetUserAttributeDefinitionResponse){
+    option(google.api.http).get = "/api/application/{application_id}/user-attribute/{attribute_id}";
+  };
+  rpc GetApplicationAttributeDefinition(GetApplicationAttributeDefinitionRequest) returns (GetApplicationAttributeDefinitionResponse){
+    option(google.api.http).get = "/app/{application_id}/attribute/{attribute_id}";
+  };
+  rpc ListUserAttributeDefinitions(ListUserAttributeDefinitionsRequest) returns (stream UserAttributeDefinition) {
+    option(google.api.http).get = "/api/application/{application_id}/user-attributes/stream";
+  };
+  rpc ListApplicationAttributeDefinitions(ListApplicationAttributeDefinitionsRequest) returns (stream ApplicationAttributeDefinition){
+    option(google.api.http).get = "/api/application/{application_id}/attributes/stream";
+  };
+  rpc DeleteUserAttributeDefinition(DeleteUserAttributeDefinitionRequest) returns (DeleteUserAttributeDefinitionResponse) {
+    option(google.api.http).delete = "/api/application/{application_id}/user-attribute/{attribute_id}";
+  };
+  rpc DeleteApplicationAttributeDefinition(DeleteApplicationAttributeDefinitionRequest) returns (DeleteApplicationAttributeDefinitionResponse) {
+    option(google.api.http).delete = "/api/application/{application_id}/attribute/{attribute_id}";
+  };
+  rpc AddAttributeTranslations(AddAttributeTranslationRequest) returns (AddAttributeTranslationResponse) {
+    option(google.api.http) = {
+      post: "/api/application/translation";
+      body: "*";
+    };
+  };
+  rpc CheckIfExists(CheckIfExistsRequest) returns (CheckIfExistsResponse);
+  rpc VerifyAuthenticationChallenge(VerifyAuthenticationChallengeRequest) returns (VerifyAuthenticationChallengeResponse);
+}
+
+// ***********************
+//        Auth
+// ***********************
+enum JWTState {
+  Valid = 0;
+  NotValid = 1;
+  Expired = 2;
+  Revoked = 3;
+  NotSigned = 4;
+  NotEffective = 5;
+}
+
+message JWTHeader {
+  string typ = 1;
+  string alg = 2;
+  string kid = 3;
+}
+
+message Profile {
+  string name = 1;
+  string family_name = 2;
+  string given_name = 3;
+  string middle_name = 4;
+  string nickname = 5;
+  string picture = 6;
+  int64 updated_at = 7;
+}
+
+message Email {
+  string email = 1;
+  bool email_verified = 2;
+}
+
+message Claims {
+  string iss = 1;
+  string sub = 2;
+  string aud = 3;
+  int64 exp = 4;
+  int64 nbf = 5;
+  int64 iat = 6;
+  string jti = 7;
+
+  TokenIntrospection token_introspection = 8;
+  string scope = 9;
+  string name = 10;
+  string email = 11;
+  bool email_verified = 12;
+
+  string key_url = 13;
+}
+
+message State {
+  string service = 1;
+  string api_endpoint = 2;
+}
+
+message JWT {
+  JWTHeader header = 1;
+  Claims claims = 2;
+  string signature = 3;
+}
+
+message TokenIntrospection {
+  bool active = 1;
+  string iss = 2;
+  string aud = 3;
+  int64 iat = 4;
+  int64 exp = 5;
+  string client_id = 6;
+  string scope = 7;
+  string sub = 8;
+  string jti = 9;
+}
+
+// TokenStoreService token database service
+service TokenStoreService {
+  rpc Synchronize (stream JWTStateMessage) returns (stream JWTStateMessage);
+  rpc SaveJwt(SaveJwtRequest) returns (SaveJwtResponse);
+  rpc DeleteJwt (DeleteJwtRequest) returns (DeleteJwtResponse);
+  rpc GetJwtInfo (GetJwtInfoRequest) returns (GetJwtInfoResponse) {
+    option (google.api.http).get = "/jwt/{jti}/info";
+  };
+}
+
+message JWTStateMessage {
+  JWTState state = 1;
+  string jti = 2;
+  JwtInfo info = 3;
+}
+message JwtInfo {
+  string iss = 1;
+  string aud = 2;
+  string jti = 3;
+  int64 nbf = 4;
+  int64 exp = 5;
+  JWTState state = 6;
+}
+
+message GetJwtInfoRequest {
+  string jti = 1;
+  string signature = 2;
+}
+message GetJwtInfoResponse {
+  JWTState state = 1;
+}
+
+message SaveJwtRequest {
+  JwtInfo info = 1;
+}
+message SaveJwtResponse {}
+
+message DeleteJwtRequest {
+  string jti = 1;
+}
+message DeleteJwtResponse {}
+
+
+// Authentication service
+service AuthenticationService {
+  rpc CreateCredentials (CreateCredentialsRequest) returns (CreateCredentialsResponse);
+  rpc UpdateEmail (UpdateEmailRequest) returns (UpdateEmailResponse);
+  rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse);
+  rpc SetPassword (SetPasswordRequest) returns (SetPasswordResponse);
+}
+
+message CreateCredentialsRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+message CreateCredentialsResponse {
+  bool user_taken = 1;
+  bool email_taken = 2;
+  string code = 3;
+}
+
+message UpdateEmailRequest {
+  string username = 1;
+  string old_email = 2;
+  string new_email = 3;
+}
+message UpdateEmailResponse {}
+
+message AuthenticateRequest {
+  string subject = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string password = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message AuthenticateResponse {
+  bool success = 1;
+}
+
+message SetPasswordRequest {
+  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string old_password = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string new_password = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message SetPasswordResponse {
+  bool already_used = 1;
+}
+
+message CreateTokenRequest {
+  string sub = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string audience = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  repeated string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  map<string, string> scope_values = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  map<string, string> data = 5 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message CreateTokenResponse {
+  JWT jwt = 1;
+}
+
+// ***********************
+//        Files
+// ***********************
+
+enum FileListOrder {
+  DefaultOrder = 0;
+  OrderByName = 1;
+  OrderByModified = 2;
+  OrderBySize = 4;
+}
+
+message ClusterNode {
+  string id = 1;
+  string certificate = 2;
+  uint64 capacity = 3;
+  uint64 usage = 4;
+  string service_address = 5;
+  string gateway_address = 6;
+  bool syncing = 7;
+  string access_key = 8;
+  string secret = 9;
+}
+
+message Stats {
+  string id = 1;
+  FileType type = 2;
+  string name = 3;
+  string parent = 4;
+  int64 size = 5;
+  int64 create_time = 6;
+  int64 edit_time = 7;
+  int64 access_time = 8;
+  string hash = 9;
+}
+
+message FileEvent {
+  int64 seq = 1;
+  Action action = 2;
+  string path = 3;
+  Stats stats = 4;
+}
+
+message SyncEvent {
+  int64 seq = 1;
+  string from = 2;
+  string to = 3;
+  FileEvent event = 4;
+}
+
+message SyncMessage {
+  int64 from = 1;
+  string dir = 2;
+}
+
+message FileAccess {
+  string uuid = 1;
+  ShareType type = 2;
+  string user = 3;
+  string file_path = 4;
+  FileAction rights = 5;
+}
+
+message ListResult {
+  repeated Stats list = 1;
+  uint32 page_number = 2;
+  uint32 page_count = 3;
+  uint32 total = 4;
+}
+
+message ListOptions {
+  int32 offset = 1;
+  uint32 count = 2;
+}
+
+message EncryptOption {
+  bytes key = 1;
+  string alg = 2;
+  string version = 3;
+}
+
+message PutOptions {
+  bool create = 1;
+  uint64 size = 2;
+  string md5 = 3;
+  EncryptOption encryption = 4;
+}
+
+message MultipartCreateOptions {
+  bool override = 1;
+  bool rename = 2;
+}
+
+message MultipartPutOptions {
+  uint64 size = 1;
+  string md5 = 2;
+  uint32 part_number = 3;
+  uint32 total_parts = 4;
+  EncryptOption encryption = 5;
+}
+
+message ReadOptions {
+  bool range = 1;
+  uint64 offset = 2;
+  int64 length = 3;
+  EncryptOption encryption = 4;
+}
+
+message CreateOptions {
+  bool override = 1;
+  bool rename = 2;
+}
+
+message ShareOptions {
+  int32 max_download = 1;
+  int64 expire = 2;
+  string password = 3;
+}
+
+message CopyOptions {
+  OnDuplicateAction duplicate_action = 3;
+}
+
+message MoveOptions {
+  OnDuplicateAction duplicate_action = 3;
+}
+
+message Meta {
+  string name = 1;
+  string value = 2;
+}
+
+message ContentPart {
+  string id = 1;
+  uint32 number = 2;
+}
+
+message ListRequest {
+  string dir = 1;
+  int32 offset = 2;
+  uint32 count = 3;
+}
+message ListResponse {
+  repeated Stats list = 1;
+  uint32 page = 2;
+  uint32 page_count = 3;
+}
+
+message CreateRequest {
+  string path = 1;
+  FileType type = 2;
+}
+message CreateResponse {
+}
+
+message StatsRequest {
+  string path = 1;
+  bool with_hash = 2;
+}
+message StatsResponse {
+  Stats stats = 1;
+}
+
+message GetListStreamRequest {
+  string dir = 1;
+}
+
+message GetMetaRequest {
+  string path = 1;
+}
+message GetMetaResponse {
+  repeated Meta meta = 1;
+}
+
+message SetMetaRequest {
+  string path = 1;
+  repeated Meta meta = 2;
+}
+message SetMetaResponse {}
+
+message CopyRequest {
+  repeated string paths = 1;
+  string dir = 2;
+}
+message CopyResponse {}
+
+message MoveRequest {
+  repeated string paths = 1;
+  string dir = 2;
+}
+message MoveResponse {
+}
+
+message RenameRequest {
+  string path = 1;
+  string new_name = 2;
+}
+message RenameResponse {
+}
+
+message UploadURLRequest {
+  string node_path = 1;
+  int64 content_size = 2;
+  bool append = 3;
+}
+message UploadURLResponse {
+  string url = 1;
+}
+
+message DownloadURLRequest {
+  string node_path = 1;
+}
+message DownloadURLResponse {
+  string url = 1;
+}
+
+message DeleteRequest {
+  string path = 1;
+}
+message DeleteResponse {
+}
+
+message MultipartCreateRequest {
+  string node_path = 1;
+  MultipartCreateOptions options = 2;
+}
+message MultipartCreateResponse {
+  string id = 1;
+  string name = 2;
+}
+
+message MultipartPutRequest {
+  string id = 1;
+}
+message MultipartPutResponse {
+}
+
+message MultipartFinishRequest {
+  string id = 1;
+}
+message MultipartFinishResponse {
+}
+
+service Files {
+  rpc List (ListRequest) returns (ListResponse) {
+    option(google.api.http).get = "/api/list/{dir=**}";
+  };
+
+  rpc GetListStream(GetListStreamRequest) returns (stream Stats);
+
+  rpc Create (CreateRequest) returns (CreateResponse) {
+    option(google.api.http).get = "/api/create/{path=**}";
+  };
+
+  rpc GetStats (StatsRequest) returns (StatsResponse) {
+    option(google.api.http).get = "/api/info/{path=**}";
+  };
+
+  rpc StatsSession(stream StatsRequest) returns (stream Stats);
+
+  rpc GetMeta (GetMetaRequest) returns (GetMetaResponse) {
+    option(google.api.http).get = "/api/meta/{path=**}";
+  };
+
+  rpc SetMeta (SetMetaRequest) returns (SetMetaResponse) {
+    option(google.api.http) = {
+      post: "/api/meta/{path=**}";
+      body: "*";
+    };
+  };
+
+  rpc DownloadURL (DownloadURLRequest) returns (DownloadURLResponse) {
+    option(google.api.http).get = "/api/download_url/{node_path=**}";
+  };
+
+  rpc UploadURL (UploadURLRequest) returns (UploadURLResponse) {
+    option(google.api.http).get = "/api/upload_url/{node_path=**}";
+  };
+
+  rpc Copy (CopyRequest) returns (CopyResponse) {
+    option(google.api.http) = {
+      post: "/api/copy";
+      body: "*";
+    };
+  };
+
+  rpc Move (MoveRequest) returns (MoveResponse) {
+    option(google.api.http) = {
+      post: "/api/move";
+      body: "*";
+    };
+  };
+
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {
+    option(google.api.http).get = "/api/delete/{path=**}";
+  };
+}
+
+// ***********************
+//        Service
+// ***********************
+message CSRData {
+  repeated string addresses = 1;
+  repeated string domains = 2;
+  bytes public_key = 3;
+  string subject = 4;
+}
+
+message SignCertificateRequest {
+  CSRData csr = 1;
+}
+message SignCertificateResponse {
+  bytes raw_certificate = 1;
+}
+
+service CSR {
+  rpc SignCertificate (SignCertificateRequest) returns (SignCertificateResponse) {
+    option (google.api.http) = {
+      post: "/cert/sign";
+      body: "*";
+    };
+  };
+}
+
+
+message ConnectionInfo {
+  Protocol protocol = 1;
+  string address = 2;
+  bytes Certificate = 3;
+}
+
+message Node {
+  string id = 1;
+  Protocol protocol = 2;
+  string address = 3;
+  Security security = 4;
+  int64 ttl = 5;
+  map<string, string> meta = 6;
+}
+
+message ServiceInfo {
+  string id = 1;
+  ServiceType type = 2;
+  string label = 3;
+  repeated Node nodes = 4;
+  map<string, string> meta = 5;
+}
+
+message RegistryEvent {
+  RegistryEventType type = 1;
+  string service_id = 2;
+  ServiceInfo info = 3;
+  ActionOnRegisterExistingService on_register_existing = 4;
+}
+
+message RegisterRequest {
+  ServiceInfo service = 1;
+  ActionOnRegisterExistingService action = 2;
+}
+message RegisterResponse {
+  string registry_id = 1;
+}
+
+message DeregisterRequest {
+  string registry_id = 1;
+  repeated string nodes = 2;
+}
+message DeregisterResponse {}
+
+message ListServicesRequest {
+  string namespace = 1;
+}
+message ListServicesResponse {
+  repeated ServiceInfo services = 1;
+}
+
+message GetRequest {
+  string registry_id = 1;
+}
+message GetResponse {
+  ServiceInfo info = 1;
+}
+
+message SearchRequest {
+  string namespace = 1;
+  ServiceType type = 2;
+}
+message SearchResponse {
+  repeated ServiceInfo services = 1;
+}
+
+service Registry {
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option(google.api.http) = {
+      post: "/service/register";
+      body: "*";
+    };
+  };
+  rpc Deregister(DeregisterRequest)returns(DeregisterResponse){
+    option(google.api.http).get = "/service/deregister/{registry_id}";
+  };
+  rpc List(ListServicesRequest)returns(ListServicesResponse){
+    option(google.api.http).get = "/service/list";
+  };
+  rpc Get(GetRequest)returns(GetResponse){
+    option(google.api.http).get = "/service/get/{registry_id}";
+  };
+  rpc Search(SearchRequest) returns (SearchResponse) {
+    option(google.api.http).get = "/service/search";
+  };
+  rpc Listen(stream RegistryEvent) returns (stream RegistryEvent);
+}
+
+// ***********************
+//        Users
+// ***********************
+
+message User {
+  string group_path = 1;
+  string name = 2;
+  uint32 role = 3;
+  GroupAbilities capabilities = 4;
+}
+
+message Group {
+  string path = 1;
+  string label = 2;
+  string description = 3;
+  int64 created_at = 4;
+  string created_by = 5;
+}
+
+service UsersService {
+  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
+    option(google.api.http) = {
+      post: "/api/groups/new";
+      body: "*";
+    };
+  };
+
+  rpc GetGroup (GetGroupRequest) returns (GetGroupResponse) {
+    option(google.api.http).get = "/api/groups/info/{group_path}";
+  };
+
+  rpc StreamSubGroups (StreamSubGroupsRequest) returns (stream Group);
+
+  rpc ListSubGroup (ListSubGroupRequest) returns (ListSubGroupResponse) {
+    option(google.api.http).get = "/api/group/subs/{group_path}";
+  };
+
+  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {
+    option(google.api.http).delete = "/api/groups/{group_path}";
+  };
+
+  rpc AddUser (AddUserRequest) returns (AddUserResponse) {
+    option(google.api.http) = {
+      post: "/api/users/new";
+      body: "*";
+    };
+  };
+
+  rpc MoveUser (MoveUserRequest) returns (MoveUserResponse) {
+    option(google.api.http) = {
+      post: "/api/users/{user.name}/move";
+      body: "*";
+    };
+  };
+
+  rpc GetUserStream (GetUserStreamRequest) returns (stream User);
+
+  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+    option(google.api.http).get = "/api/users/list";
+  };
+
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
+    option(google.api.http).delete = "/api/users/{user.name}";
+  };
+
+  rpc DeleteUserSession (stream User) returns (stream User);
+}
+
+message CreateGroupRequest {
+  Group group = 1;
+}
+message CreateGroupResponse {}
+
+message GetGroupRequest {
+  string group_path = 1;
+}
+message GetGroupResponse {
+  Group group = 1;
+}
+
+message StreamSubGroupsRequest {
+  string group_path = 1;
+}
+
+message ListSubGroupRequest {
+  string group_path = 1;
+  uint32 offset = 2;
+}
+message ListSubGroupResponse {
+  repeated Group groups = 1;
+  uint32 offset = 2;
+  uint32 total = 3;
+}
+
+message DeleteGroupRequest {
+  string group_path = 1;
+}
+message DeleteGroupResponse {}
+
+message AddUserRequest {
+  User user = 1;
+  GroupAbilities capabilities = 2;
+}
+message AddUserResponse {
+}
+
+message MoveUserRequest {
+  User user = 1;
+  string group_path = 2;
+}
+message MoveUserResponse {}
+
+message GetUserStreamRequest {
+  string group_path = 1;
+}
+
+message ListUsersRequest {
+  string group_path = 1;
+  uint32 offset = 2;
+}
+message ListUsersResponse {
+  repeated User users = 1;
+  uint32 offset = 2;
+  uint32 total = 3;
+}
+
+message DeleteUserRequest {
+  User user = 1;
+}
+message DeleteUserResponse {
+}
