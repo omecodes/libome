@@ -1,0 +1,208 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "auth.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/jwt/{jti}/info": {
+      "get": {
+        "operationId": "GetJwtInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authpbGetJwtInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "jti",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "signature",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TokenStoreService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "authpbAuthenticateResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "authpbCreateCredentialsResponse": {
+      "type": "object",
+      "properties": {
+        "user_taken": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "email_taken": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "authpbCredentials": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "authpbDeleteJwtResponse": {
+      "type": "object"
+    },
+    "authpbEventAction": {
+      "type": "string",
+      "enum": [
+        "Delete",
+        "Save"
+      ],
+      "default": "Delete"
+    },
+    "authpbGetJwtInfoResponse": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "$ref": "#/definitions/authpbJWTState"
+        }
+      }
+    },
+    "authpbJWTState": {
+      "type": "string",
+      "enum": [
+        "VALID",
+        "NOT_VALID",
+        "EXPIRED",
+        "REVOKED",
+        "NOT_SIGNED",
+        "NOT_EFFECTIVE"
+      ],
+      "default": "VALID"
+    },
+    "authpbJwtInfo": {
+      "type": "object",
+      "properties": {
+        "iss": {
+          "type": "string"
+        },
+        "aud": {
+          "type": "string"
+        },
+        "jti": {
+          "type": "string"
+        },
+        "nbf": {
+          "type": "string",
+          "format": "int64"
+        },
+        "exp": {
+          "type": "string",
+          "format": "int64"
+        },
+        "state": {
+          "$ref": "#/definitions/authpbJWTState"
+        }
+      }
+    },
+    "authpbSaveJwtResponse": {
+      "type": "object"
+    },
+    "authpbSetPasswordResponse": {
+      "type": "object",
+      "properties": {
+        "already_used": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "authpbSyncMessage": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/authpbEventAction"
+        },
+        "jti": {
+          "type": "string"
+        },
+        "info": {
+          "$ref": "#/definitions/authpbJwtInfo"
+        }
+      }
+    },
+    "authpbUpdateEmailResponse": {
+      "type": "object"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeStreamError": {
+      "type": "object",
+      "properties": {
+        "grpc_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "http_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "http_status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

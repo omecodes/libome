@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/proto/auth/auth.proto;authpb";
+
+enum JWTPurpose {
+    AUTHENTICATION = 0;
+    RESOURCES_ACCESS = 1;
+    VALIDATION = 2;
+}
+
+enum JWTState {
+    VALID = 0;
+    NOT_VALID = 1;
+    EXPIRED = 2;
+    REVOKED = 3;
+    NOT_SIGNED = 4;
+    NOT_EFFECTIVE = 5;
+}
+
+message JWTHeader {
+    string typ = 1;
+    string alg = 2;
+    string kid = 3;
+}
+
+message Profile {
+    string name = 1;
+    string family_name = 2;
+    string given_name = 3;
+    string middle_name = 4;
+    string nickname = 5;
+    string picture = 6;
+    int64 updated_at = 7;
+}
+
+message Email {
+    string email = 1;
+    bool email_verified = 2;
+}
+
+message Claims {
+    string iss = 1;
+    string sub = 2;
+    string aud = 3;
+    int64 exp = 4;
+    int64 nbf = 5;
+    int64 iat = 6;
+    string jti = 7;
+
+    TokenIntrospection token_introspection = 8;
+    string scope = 9;
+    string name = 10;
+    string email = 11;
+    bool email_verified = 12;
+
+    string key_url = 13;
+    State state = 14;
+}
+
+message State {
+    string service = 1;
+    string api_endpoint = 2;
+}
+
+message JWT {
+    JWTHeader header = 1;
+    Claims claims = 2;
+    string signature = 3;
+}
+
+message TokenIntrospection {
+    bool active = 1;
+    string iss = 2;
+    string aud = 3;
+    int64 iat = 4;
+    int64 exp = 5;
+    string client_id = 6;
+    string scope = 7;
+    string sub = 8;
+    string jti = 9;
+}
+
+message Credentials {
+    string subject = 1;
+    string email = 2;
+    string password = 3;
+}
+
+enum EventAction {
+    Delete = 0;
+    Save = 1;
+}
+
+// TokenStoreService token database service
+service TokenStoreService {
+    rpc Sync (stream SyncMessage) returns (stream SyncMessage);
+    rpc SaveJwt(SaveJwtRequest) returns (SaveJwtResponse);
+    rpc DeleteJwt (DeleteJwtRequest) returns (DeleteJwtResponse);
+    rpc GetJwtInfo (GetJwtInfoRequest) returns (GetJwtInfoResponse) {
+        option (google.api.http).get = "/jwt/{jti}/info";
+    };
+}
+
+message SyncMessage {
+    EventAction action = 1;
+    string jti = 2;
+    JwtInfo info = 3;
+}
+message JwtInfo {
+    string iss = 1;
+    string aud = 2;
+    string jti = 3;
+    int64 nbf = 4;
+    int64 exp = 5;
+    JWTState state = 6;
+}
+
+message GetJwtInfoRequest {
+    string jti = 1;
+    string signature = 2;
+}
+message GetJwtInfoResponse {
+    JWTState state = 1;
+}
+
+message SaveJwtRequest {
+    JwtInfo info = 1;
+}
+message SaveJwtResponse {}
+
+message DeleteJwtRequest {
+    string jti = 1;
+}
+message DeleteJwtResponse {}
+
+
+// Authentication service
+service AuthenticationService {
+    rpc CreateCredentials (CreateCredentialsRequest) returns (CreateCredentialsResponse);
+    rpc UpdateEmail (UpdateEmailRequest) returns (UpdateEmailResponse);
+    rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse);
+    rpc SetPassword (SetPasswordRequest) returns (SetPasswordResponse);
+}
+
+message CreateCredentialsRequest {
+    Credentials credentials = 1 [(validator.field) = {msg_exists: true}];
+}
+message CreateCredentialsResponse {
+    bool user_taken = 1;
+    bool email_taken = 2;
+    string code = 3;
+}
+
+message UpdateEmailRequest {
+    string username = 1;
+    string old_email = 2;
+    string new_email = 3;
+}
+message UpdateEmailResponse {}
+
+message AuthenticateRequest {
+    string subject = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    string password = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message AuthenticateResponse {
+    bool success = 1;
+}
+
+message SetPasswordRequest {
+    string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    string old_password = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    string new_password = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message SetPasswordResponse {
+    bool already_used = 1;
+}
+
+message CreateTokenRequest {
+    string sub = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    string audience = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    repeated string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    map<string, string> scope_values = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+    map<string, string> data = 5 [(validator.field) = {msg_exists: true, length_gt: 0}];
+}
+message CreateTokenResponse {
+    JWT jwt = 1;
+}

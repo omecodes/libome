@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+option go_package = "github.com/omecodes/libome/proto/ca/ca.proto;capb";
+
+
+message CSRData {
+    repeated string addresses = 1;
+    repeated string domains = 2;
+    bytes public_key = 3;
+    string subject = 4;
+}
+
+message SignCertificateRequest {
+    CSRData csr = 1;
+}
+message SignCertificateResponse {
+    bytes raw_certificate = 1;
+}
+
+service CSR {
+    rpc SignCertificate (SignCertificateRequest) returns (SignCertificateResponse) {
+        option (google.api.http) = {
+            post: "/cert/sign";
+            body: "*";
+        };
+    };
+}
