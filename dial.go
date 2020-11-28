@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"sync"
 
-	"github.com/omecodes/libome/v2/crypt"
+	"github.com/omecodes/libome/crypt"
 )
 
 type poolOptions struct {

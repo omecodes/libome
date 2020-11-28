@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "google/api/annotations.proto";
-option go_package = "github.com/omecodes/libome/v2/ome.proto;ome";
+option go_package = "github.com/omecodes/libome/ome.proto;ome";
 
 enum FileType {
   Unknown = 0;

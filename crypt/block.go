@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	//"github.com/pydio/cells/common/proto/encryption"
 )
 
 const (

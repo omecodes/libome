@@ -1,2 +1,0 @@
-# libome
-Ome library
