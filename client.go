@@ -93,7 +93,3 @@ func (c Client) Verify(ctx context.Context, t *JWT) (JWTState, error) {
 	verifier := NewTokenVerifier(key.(*ecdsa.PublicKey))
 	return verifier.Verify(ctx, t)
 }
-
-func (c *Client) RegisterUserAttributeDefinition(attrDefs []*UserAttributeDefinition) error {
-	return nil
-}
