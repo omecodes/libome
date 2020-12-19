@@ -8,7 +8,6 @@ import (
 )
 
 type ListenOptions struct {
-	trust        bool
 	certFilename string
 	keyFilename  string
 	clientCAs    []string
@@ -24,20 +23,20 @@ type ListenOption func(opts *ListenOptions)
 func WithTLSConfig(tc *tls.Config) ListenOption {
 	return func(opts *ListenOptions) {
 		opts.secure = tc != nil
-		opts.tc = tc
 		opts.certFilename = ""
 		opts.keyFilename = ""
+		opts.clientCAs = nil
+		opts.tc = tc
 	}
 }
 
 // WithTLSParams adds tls config params
 // specifies certificate and key filenames for tls config
 // And adds the list of client authority certificate filenames for tls config
-func WithTLSParams(selfSigned bool, certFilename, keyFilename string, clientCARootFilenames ...string) ListenOption {
+func WithTLSParams(certFilename, keyFilename string, clientCARootFilenames ...string) ListenOption {
 	return func(opts *ListenOptions) {
 		opts.secure = certFilename != "" && keyFilename != ""
 		opts.clientCAs = append(opts.clientCAs, clientCARootFilenames...)
-		opts.trust = selfSigned
 		opts.tc = nil
 		opts.certFilename = certFilename
 		opts.keyFilename = keyFilename
@@ -82,9 +81,15 @@ func Listen(address string, opts ...ListenOption) (net.Listener, error) {
 			},
 		}
 
-		if lopts.trust {
+		if len(lopts.clientCAs) > 0 {
 			pool := x509.NewCertPool()
-			pool.AddCert(cert)
+			for _, filename := range lopts.clientCAs {
+				cert, err := crypt.LoadCertificate(filename)
+				if err != nil {
+					return nil, err
+				}
+				pool.AddCert(cert)
+			}
 			tc.ClientCAs = pool
 		}
 
