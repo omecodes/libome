@@ -95,19 +95,6 @@ enum Protocol {
   Http = 2;
 }
 
-enum ServiceType {
-  UnknownType = 0;
-  CA = 1;
-  Authentication = 2;
-  Organization = 3;
-  TokenStore = 4;
-  Data = 5;
-  FileStorage = 6;
-  AppStore = 7;
-  UserAccounts = 8;
-  FilesServer = 9;
-}
-
 enum Security {
   Insecure = 0;
   Tls = 1;
@@ -897,7 +884,7 @@ message Node {
 
 message ServiceInfo {
   string id = 1;
-  ServiceType type = 2;
+  uint32 type = 2;
   string label = 3;
   repeated Node nodes = 4;
   map<string, string> meta = 5;
@@ -940,7 +927,7 @@ message GetResponse {
 
 message SearchRequest {
   string namespace = 1;
-  ServiceType type = 2;
+  uint32 type = 2;
 }
 message SearchResponse {
   repeated ServiceInfo services = 1;
