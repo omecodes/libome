@@ -10,19 +10,19 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-type GRPCContextInterceptor interface {
+type GrpcContextInterceptor interface {
 	UnaryUpdate(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error)
 	StreamUpdate(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error
 }
 
 type interceptorChain struct {
-	interceptors []GRPCContextUpdater
+	interceptors []GrpcContextUpdater
 }
 
 func (interceptor *interceptorChain) UnaryUpdate(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	var err error
 	for _, i := range interceptor.interceptors {
-		ctx, err = i.Intercept(ctx)
+		ctx, err = i.UpdateContext(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -35,30 +35,30 @@ func (interceptor *interceptorChain) StreamUpdate(srv interface{}, ss grpc.Serve
 	var err error
 	ctx := ss.Context()
 	for _, i := range interceptor.interceptors {
-		ctx, err = i.Intercept(ctx)
+		ctx, err = i.UpdateContext(ctx)
 	}
 	ss = GRPCStream(ctx, ss)
 	err = handler(srv, ss)
 	return err
 }
 
-// NewInterceptorsChain is a chain of interceptors
-func NewInterceptorsChain(i ...GRPCContextUpdater) GRPCContextInterceptor {
+// NewGrpcContextInterceptor is a chain of interceptors
+func NewGrpcContextInterceptor(i ...GrpcContextUpdater) GrpcContextInterceptor {
 	return &interceptorChain{interceptors: i}
 }
 
 // GRPCContextUpdater is a context wrapper which is executed when gRPC function is called
 // it can be use to enrich context or verify authentication.
-type GRPCContextUpdater interface {
+type GrpcContextUpdater interface {
 	// Intercept gets token works with and return a new token
-	Intercept(ctx context.Context) (context.Context, error)
+	UpdateContext(ctx context.Context) (context.Context, error)
 }
 
 // InterceptorFunc is an interceptor function
-type InterceptorFunc func(ctx context.Context) (context.Context, error)
+type GrpcContextUpdaterFunc func(ctx context.Context) (context.Context, error)
 
 // Intercept gets token works with and return a new token
-func (interceptorFunc InterceptorFunc) Intercept(ctx context.Context) (context.Context, error) {
+func (interceptorFunc GrpcContextUpdaterFunc) UpdateContext(ctx context.Context) (context.Context, error) {
 	return interceptorFunc(ctx)
 }
 
@@ -69,7 +69,7 @@ type jwtVerifier struct {
 	verifyFunc JwtVerifyFunc
 }
 
-func (j *jwtVerifier) Intercept(ctx context.Context) (context.Context, error) {
+func (j *jwtVerifier) UpdateContext(ctx context.Context) (context.Context, error) {
 	var err error
 
 	md, ok := metadata.FromIncomingContext(ctx)
@@ -103,7 +103,7 @@ func NewJwtVerifierInterceptor(verifyFunc JwtVerifyFunc) *jwtVerifier {
 
 type proxyBasic struct{}
 
-func (b *proxyBasic) Intercept(ctx context.Context) (context.Context, error) {
+func (b *proxyBasic) UpdateContext(ctx context.Context) (context.Context, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		//return nil, errors.Forbidden
