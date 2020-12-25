@@ -4,10 +4,15 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
+	"path"
 	"strings"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+
+	"github.com/omecodes/libome/logs"
 )
 
 type GrpcContextInterceptor interface {
@@ -21,6 +26,9 @@ type interceptorChain struct {
 
 func (interceptor *interceptorChain) UnaryUpdate(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	var err error
+	start := time.Now()
+	method := path.Base(info.FullMethod)
+
 	for _, i := range interceptor.interceptors {
 		ctx, err = i.UpdateContext(ctx)
 		if err != nil {
@@ -28,17 +36,29 @@ func (interceptor *interceptorChain) UnaryUpdate(ctx context.Context, req interf
 		}
 	}
 	rsp, err := handler(ctx, req)
+	if err != nil {
+		logs.Error(fmt.Sprintf("GRPC %s", method), logs.Field("request", req), logs.Err(err), logs.Field("duration", time.Since(start)))
+	} else {
+		logs.Info(fmt.Sprintf("GRPC %s", method), logs.Field("req", req), logs.Field("rsp", rsp), logs.Field("duration", time.Since(start)))
+	}
 	return rsp, err
 }
 
 func (interceptor *interceptorChain) StreamUpdate(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	var err error
+	start := time.Now()
+	method := path.Base(info.FullMethod)
 	ctx := ss.Context()
 	for _, i := range interceptor.interceptors {
 		ctx, err = i.UpdateContext(ctx)
 	}
 	ss = GRPCStream(ctx, ss)
 	err = handler(srv, ss)
+	if err != nil {
+		logs.Error(fmt.Sprintf("GRPC %s", method), logs.Err(err), logs.Field("duration", time.Since(start)))
+	} else {
+		logs.Info(fmt.Sprintf("GRPC %s", method), logs.Field("duration", time.Since(start)))
+	}
 	return err
 }
 
