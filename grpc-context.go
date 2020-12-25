@@ -37,9 +37,9 @@ func (interceptor *interceptorChain) UnaryUpdate(ctx context.Context, req interf
 	}
 	rsp, err := handler(ctx, req)
 	if err != nil {
-		logs.Error(fmt.Sprintf("GRPC %s", method), logs.Field("request", req), logs.Err(err), logs.Field("duration", time.Since(start)))
+		logs.Error(fmt.Sprintf("GRPC %s", method), logs.Details("request", req), logs.Err(err), logs.Details("duration", time.Since(start)))
 	} else {
-		logs.Info(fmt.Sprintf("GRPC %s", method), logs.Field("req", req), logs.Field("rsp", rsp), logs.Field("duration", time.Since(start)))
+		logs.Info(fmt.Sprintf("GRPC %s", method), logs.Details("req", req), logs.Details("rsp", rsp), logs.Details("duration", time.Since(start)))
 	}
 	return rsp, err
 }
@@ -55,9 +55,9 @@ func (interceptor *interceptorChain) StreamUpdate(srv interface{}, ss grpc.Serve
 	ss = GRPCStream(ctx, ss)
 	err = handler(srv, ss)
 	if err != nil {
-		logs.Error(fmt.Sprintf("GRPC %s", method), logs.Err(err), logs.Field("duration", time.Since(start)))
+		logs.Error(fmt.Sprintf("GRPC %s", method), logs.Err(err), logs.Details("duration", time.Since(start)))
 	} else {
-		logs.Info(fmt.Sprintf("GRPC %s", method), logs.Field("duration", time.Since(start)))
+		logs.Info(fmt.Sprintf("GRPC %s", method), logs.Details("duration", time.Since(start)))
 	}
 	return err
 }
