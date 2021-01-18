@@ -8,6 +8,7 @@ import (
 
 type aesGCMEncryptReader struct {
 	stream                io.Reader
+	closer                io.Closer
 	eof                   bool
 	bufferedProcessed     *bytes.Buffer
 	encryptionKey         []byte
@@ -58,7 +59,7 @@ func (reader *aesGCMEncryptReader) Read(b []byte) (int, error) {
 				return 0, err
 			}
 
-			h := new(header)
+			h := new(BlockHeader)
 			h.Nonce = nonce
 
 			b := &encryptedBlock{}
@@ -71,6 +72,13 @@ func (reader *aesGCMEncryptReader) Read(b []byte) (int, error) {
 		}
 	}
 	return totalRead, nil
+}
+
+func (reader *aesGCMEncryptReader) Close() error {
+	if reader.closer == nil {
+		return nil
+	}
+	return reader.closer.Close()
 }
 
 func newAesGCMEncryptReader(key []byte, stream io.Reader, opts ...ReadOption) *aesGCMEncryptReader {

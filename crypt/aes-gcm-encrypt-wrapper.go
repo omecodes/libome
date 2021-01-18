@@ -11,8 +11,14 @@ type AESGCMEncryptWrapper struct {
 	outputSize int64
 }
 
-func (d *AESGCMEncryptWrapper) Wrap(reader io.Reader) io.Reader {
+func (d *AESGCMEncryptWrapper) WrapReader(reader io.Reader) io.ReadCloser {
 	return newAesGCMEncryptReader(d.key, reader, d.options...)
+}
+
+func (d *AESGCMEncryptWrapper) WrapReadCloser(readCloser io.ReadCloser) io.ReadCloser {
+	rc := newAesGCMEncryptReader(d.key, readCloser, d.options...)
+	rc.closer = readCloser
+	return rc
 }
 
 func (d *AESGCMEncryptWrapper) WithOutputSize(inputSize int64) int64 {
@@ -34,7 +40,7 @@ func (d *AESGCMEncryptWrapper) WithOutputSize(inputSize int64) int64 {
 		}
 	}
 
-	var header header
+	var header BlockHeader
 	// header.Options = new(options)
 	header.Nonce = make([]byte, 12)
 

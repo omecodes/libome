@@ -405,10 +405,13 @@ message JWTHeader {
 
 message Profile {
   bool verified = 1;
-  string email = 2;
-  string avatar_url = 3;
-  string language = 4;
-  int64 created_at = 5;
+  string first_name = 2;
+  string last_name = 3;
+  string full_name = 4;
+  string email = 5;
+  string avatar_url = 6;
+  string language = 7;
+  int64 created_at = 8;
 }
 
 message Claims {

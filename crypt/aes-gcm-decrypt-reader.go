@@ -7,6 +7,7 @@ import (
 
 type aesGCMDecryptReader struct {
 	stream                io.Reader
+	closer                io.Closer
 	eof                   bool
 	bufferedProcessed     *bytes.Buffer
 	encryptionKey         []byte
@@ -78,6 +79,13 @@ func (reader *aesGCMDecryptReader) Read(b []byte) (int, error) {
 			reader.bufferedProcessed.Write(data)
 		}
 	}
+}
+
+func (reader *aesGCMDecryptReader) Close() error {
+	if reader.closer == nil {
+		return nil
+	}
+	return reader.closer.Close()
 }
 
 func newAesGCMDecryptReader(key []byte, stream io.Reader, opts ...ReadOption) *aesGCMDecryptReader {

@@ -15,16 +15,15 @@ const (
 
 	dataLengthMask uint32 = 0x7FFFFFFF
 
-	// defaultBlockSize minimal size of block files are chunk into
 	defaultBlockSize = int64(10485760) // 10Mb
 )
 
-type header struct {
+type BlockHeader struct {
 	Nonce      []byte
 	dataLength uint32
 }
 
-func (h *header) Write(writer io.Writer) (int, error) {
+func (h *BlockHeader) Write(writer io.Writer) (int, error) {
 	totalWritten := 0
 
 	n, err := writer.Write(h.Nonce)
@@ -45,7 +44,7 @@ func (h *header) Write(writer io.Writer) (int, error) {
 	return totalWritten, nil
 }
 
-func (h *header) Read(reader io.Reader) (int, error) {
+func (h *BlockHeader) Read(reader io.Reader) (int, error) {
 	totalRead := 0
 
 	h.Nonce = make([]byte, 12)
@@ -67,11 +66,11 @@ func (h *header) Read(reader io.Reader) (int, error) {
 	return totalRead, nil
 }
 
-func (h *header) GetDataLength() uint32 {
+func (h *BlockHeader) GetDataLength() uint32 {
 	return h.dataLength & dataLengthMask
 }
 
-func (h *header) String() string {
+func (h *BlockHeader) String() string {
 	sb := strings.Builder{}
 	sb.Write([]byte("\n[Header:\n"))
 	sb.Write([]byte(fmt.Sprintf("\tNonce : %s\n", base64.StdEncoding.EncodeToString(h.Nonce))))
@@ -81,7 +80,7 @@ func (h *header) String() string {
 }
 
 type encryptedBlock struct {
-	Header     *header
+	Header     *BlockHeader
 	HeaderSize uint32
 	Payload    []byte
 }
@@ -95,7 +94,7 @@ func (b *encryptedBlock) SetPayload(payload []byte) error {
 
 	b.Payload = payload
 	if b.Header == nil {
-		b.Header = new(header)
+		b.Header = new(BlockHeader)
 	}
 
 	b.Header.dataLength = (dataLengthMask & uint32(l)) | b.Header.dataLength
@@ -128,7 +127,7 @@ func (b *encryptedBlock) Write(writer io.Writer) (int, error) {
 func (b *encryptedBlock) Read(reader io.Reader) (int, error) {
 	totalRead := 0
 
-	b.Header = new(header)
+	b.Header = new(BlockHeader)
 	n, err := b.Header.Read(reader)
 	if err != nil {
 		return n, err
