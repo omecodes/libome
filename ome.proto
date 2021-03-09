@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
-import "google/api/annotations.proto";
+import "annotations.proto";
 option go_package = "github.com/omecodes/libome/ome.proto;ome";
+
 
 enum FileType {
   Unknown = 0;
@@ -128,40 +128,40 @@ enum GroupAbilities {
 // ***********************
 
 message OauthCodeExchangeData {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string client_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string state = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user = 1;
+  string client_id = 2;
+  string scope = 3;
+  string state = 4;
 }
 
 message UserEmailValidationData {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  int64 expiry = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user = 1;
+  string email = 2;
+  int64 expiry = 3;
 }
 
 message ResetPasswordEmailData {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user = 1;
   int64 expiry = 2;
 }
 
 message Authorization {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string application_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  repeated string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  int64 duration = 4 [(validator.field) = {msg_exists: true, int_gt: 0}];
+  string user = 1;
+  string application_id = 2;
+  repeated string scope = 3;
+  int64 duration = 4;
 }
 
 message Session {
-  string id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string user_agent = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string jwt = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string id = 1;
+  string user_agent = 2;
+  string jwt = 3;
   int64 openedAt = 4;
 }
 
 message AccountValidationData {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user = 1;
+  string email = 2;
   int64 expiry = 3;
 }
 
@@ -182,9 +182,9 @@ message FindAccountResponse {
 }
 
 message CreateAccountRequest {
-  string username = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string email = 2 [(validator.field) = {msg_exists : true, length_gt: 0}];
-  string password = 3 [(validator.field) = {msg_exists : true, length_gt: 0}];
+  string username = 1;
+  string email = 2;
+  string password = 3;
 }
 message CreateAccountResponse {
   bool username_exists = 1;
@@ -229,8 +229,8 @@ message UpdatePasswordRequest {
 message UpdatePasswordResponse {}
 
 message LoginRequest {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string password = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user = 1;
+  string password = 2;
 }
 message LoginResponse {
   string redirectURL = 1;
@@ -245,23 +245,23 @@ message ListSessionsResponse {
 }
 
 message CloseSessionRequest {
-  string session_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string session_id = 1;
 }
 message CloseSessionResponse {}
 
 message AuthorizeRequest {
-  string response_type = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string client_id = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string state = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string response_type = 1;
+  string client_id = 2;
+  string scope = 3;
+  string state = 4;
   string redirect_uri = 5;
 }
 message AuthorizeResponse {
 }
 
 message GetTokenRequest {
-  string grant_type = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string code = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string grant_type = 1;
+  string code = 2 ;
   string redirect_uri = 3;
   string code_verifier = 4;
   string username = 5;
@@ -306,34 +306,34 @@ message Field {
 }
 
 message AppInfo {
-  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string application_id = 1;
   string created_by = 2;
-  int64 created_at = 3 [(validator.field) = {msg_exists: true, int_gt: 0}];
-  string label = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  int64 created_at = 3;
+  string label = 4;
   string logo_url = 5;
   string description = 6;
   string website = 7;
 }
 
 message Application {
-  string id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string id = 1;
   bool activated = 2;
-  string oauth_callback_url = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string oauth_callback_url = 3;
   ApplicationLevel level = 4;
   repeated Category categories = 5;
-  string secret = 6 [(validator.field) = {msg_exists: true}];
-  AppInfo info = 7 [(validator.field) = {msg_exists: true}];
+  string secret = 6;
+  AppInfo info = 7;
 }
 
 message RegisterApplicationRequest {
-  Application application = 1 [(validator.field) = {msg_exists: true}];
+  Application application = 1;
 }
 message RegisterApplicationResponse{
   bool id_exists = 1;
 }
 
 message DeRegisterApplicationRequest{
-  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string application_id = 1;
 }
 message DeRegisterApplicationResponse{}
 
@@ -343,10 +343,10 @@ message ListApplicationsResponse{
 }
 
 message GetApplicationRequest{
-  string application_id = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string application_id = 1;
 }
 message GetApplicationResponse{
-  Application application = 1 [(validator.field) = {msg_exists: true}];
+  Application application = 1;
 }
 
 message VerifyAuthenticationChallengeRequest {
@@ -523,29 +523,29 @@ message UpdateEmailRequest {
 message UpdateEmailResponse {}
 
 message AuthenticateRequest {
-  string subject = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string password = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string subject = 1;
+  string password = 2;
 }
 message AuthenticateResponse {
   bool success = 1;
 }
 
 message SetPasswordRequest {
-  string user = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string email = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string old_password = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string new_password = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string user = 1;
+  string email = 2;
+  string old_password = 3;
+  string new_password = 4;
 }
 message SetPasswordResponse {
   bool already_used = 1;
 }
 
 message CreateTokenRequest {
-  string sub = 1 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  string audience = 2 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  repeated string scope = 3 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  map<string, string> scope_values = 4 [(validator.field) = {msg_exists: true, length_gt: 0}];
-  map<string, string> data = 5 [(validator.field) = {msg_exists: true, length_gt: 0}];
+  string sub = 1;
+  string audience = 2;
+  repeated string scope = 3;
+  map<string, string> scope_values = 4;
+  map<string, string> data = 5;
 }
 message CreateTokenResponse {
   JWT jwt = 1;
@@ -956,136 +956,4 @@ service Registry {
     option(google.api.http).get = "/service/search";
   };
   rpc Listen(stream RegistryEvent) returns (stream RegistryEvent);
-}
-
-// ***********************
-//        Users
-// ***********************
-
-message User {
-  string group_path = 1;
-  string name = 2;
-  uint32 role = 3;
-  GroupAbilities capabilities = 4;
-}
-
-message Group {
-  string path = 1;
-  string label = 2;
-  string description = 3;
-  int64 created_at = 4;
-  string created_by = 5;
-}
-
-service UsersService {
-  rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
-    option(google.api.http) = {
-      post: "/api/groups/new";
-      body: "*";
-    };
-  };
-
-  rpc GetGroup (GetGroupRequest) returns (GetGroupResponse) {
-    option(google.api.http).get = "/api/groups/info/{group_path}";
-  };
-
-  rpc StreamSubGroups (StreamSubGroupsRequest) returns (stream Group);
-
-  rpc ListSubGroup (ListSubGroupRequest) returns (ListSubGroupResponse) {
-    option(google.api.http).get = "/api/group/subs/{group_path}";
-  };
-
-  rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {
-    option(google.api.http).delete = "/api/groups/{group_path}";
-  };
-
-  rpc AddUser (AddUserRequest) returns (AddUserResponse) {
-    option(google.api.http) = {
-      post: "/api/users/new";
-      body: "*";
-    };
-  };
-
-  rpc MoveUser (MoveUserRequest) returns (MoveUserResponse) {
-    option(google.api.http) = {
-      post: "/api/users/{user.name}/move";
-      body: "*";
-    };
-  };
-
-  rpc GetUserStream (GetUserStreamRequest) returns (stream User);
-
-  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
-    option(google.api.http).get = "/api/users/list";
-  };
-
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
-    option(google.api.http).delete = "/api/users/{user.name}";
-  };
-
-  rpc DeleteUserSession (stream User) returns (stream User);
-}
-
-message CreateGroupRequest {
-  Group group = 1;
-}
-message CreateGroupResponse {}
-
-message GetGroupRequest {
-  string group_path = 1;
-}
-message GetGroupResponse {
-  Group group = 1;
-}
-
-message StreamSubGroupsRequest {
-  string group_path = 1;
-}
-
-message ListSubGroupRequest {
-  string group_path = 1;
-  uint32 offset = 2;
-}
-message ListSubGroupResponse {
-  repeated Group groups = 1;
-  uint32 offset = 2;
-  uint32 total = 3;
-}
-
-message DeleteGroupRequest {
-  string group_path = 1;
-}
-message DeleteGroupResponse {}
-
-message AddUserRequest {
-  User user = 1;
-  GroupAbilities capabilities = 2;
-}
-message AddUserResponse {
-}
-
-message MoveUserRequest {
-  User user = 1;
-  string group_path = 2;
-}
-message MoveUserResponse {}
-
-message GetUserStreamRequest {
-  string group_path = 1;
-}
-
-message ListUsersRequest {
-  string group_path = 1;
-  uint32 offset = 2;
-}
-message ListUsersResponse {
-  repeated User users = 1;
-  uint32 offset = 2;
-  uint32 total = 3;
-}
-
-message DeleteUserRequest {
-  User user = 1;
-}
-message DeleteUserResponse {
 }
