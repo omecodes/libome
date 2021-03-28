@@ -3,13 +3,6 @@ syntax = "proto3";
 import "annotations.proto";
 option go_package = "github.com/omecodes/libome/ome.proto;ome";
 
-
-enum FileType {
-  Unknown = 0;
-  File = 1;
-  Directory = 2;
-}
-
 enum Scope {
   Public = 0;
   Personal = 1;
@@ -64,14 +57,6 @@ enum Action {
   Share = 9;
   UnShare = 10;
   UpdateMeta = 11;
-}
-
-enum FileAction {
-  NoAction = 0;
-  ReadFile = 1;
-  CreateFile = 2;
-  DeleteFile = 4;
-  MoveFile = 8;
 }
 
 enum Access {
